@@ -74,7 +74,7 @@
 (defn inspectable-pages
   "Collect the list of inspectable pages returned by the DevTools protocol."
   ([host port]
-    (inspectable-pages host port 1000))
+   (inspectable-pages host port 1000))
   ([host port max-wait-time-ms]
    (wait-for-remote-debugging-port host port max-wait-time-ms)
    (let [response @(http/get (str "http://" host ":" port "/json/list"))]
@@ -107,7 +107,7 @@
     ;; Configure max message size to 1mb (default 64kb is way too small)
     (doto (.getPolicy client)
       (.setIdleTimeout 0)
-      (.setMaxTextMessageSize (* 1024 1024)))
+      (.setMaxTextMessageSize (* 1024 1024 100)))
 
     (.start client)
     (->Connection (ws/connect web-socket-debugger-url
@@ -129,9 +129,9 @@
   ([host port max-wait-time-ms]
    (when max-wait-time-ms
      (wait-for-remote-debugging-port host port max-wait-time-ms))
-    (let [url (-> (inspectable-pages host port)
-                  (first-inspectable-page))]
-      (connect-url url))))
+   (let [url (-> (inspectable-pages host port)
+                 (first-inspectable-page))]
+     (connect-url url))))
 
 (defn send-command [{requests :requests con :ws-connection} payload id callback]
   (swap! requests assoc id callback)
